@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Millaverito</title>
+  <link rel="stylesheet" type="text/css" href="Styles2.css">
+</head>
+<body>
+<header> <img src="escudo.png">
+</header>
+  <table>
+    <thead>
+      <tr>
+        <th class="title-cell" colspan="6">Listado de Productos</th>
+      </tr>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Cantidad</th>
+        <th>Precio</th>
+        <th>Vencimiento</th>
+        <th>Proveedor</th>
+      </tr>
+    </thead>
+    <tbody id="productos-lista"></tbody>
+  </table>
+  
+
+  <div class="botones-container">
+    <input type="button" value="Agregar Producto" onclick="agregarProducto()">
+    <input type="button" value="Eliminar Producto" onclick="eliminarProducto()">
+    <input type="button" value="Actualizar Stock" onclick="actualizarStock()">
+    <input type="button"value="Info" onclick="info()">
+    <input type="button"value="Pedidos" onclick="Pedidos()">
+    <input type="button" value="Salir" onclick="regresarPaginaAnterior()">
+  </div>
+  <script>
+
+    const Producto = (id, nombre, cantidad, precio, fechaVencimiento, proveedor) => ({
+      id,
+      nombre,
+      cantidad,
+      precio,
+      fechaVencimiento,
+      proveedor
+    });
+
+    const productos = [
+      {
+        id: 1,
+        nombre: "Arroz",
+        cantidad: 15,
+        precio: 11.5,
+        fechaVencimiento: new Date(2023, 12, 31),
+        proveedor: "Steren"
+      },
+      {
+        id: 2,
+        nombre: "Azucar",
+        cantidad: 10,
+        precio: 5.5,
+        fechaVencimiento: new Date(2024, 2, 8),
+        proveedor: "Tia"
+      },
+      {
+        id: 3,
+        nombre: "Harina",
+        cantidad: 10,
+        precio: 10.5,
+        fechaVencimiento: new Date(2024, 6, 25),
+        proveedor: "El Gran Akí"
+      },
+    {
+    id: 4,
+    nombre: "Arroz",
+    cantidad: 8,
+    precio: 5.75,
+    fechaVencimiento: new Date(2024, 9, 15),
+    proveedor: "Supermercado Económico"
+  },
+  {
+    id: 5,
+    nombre: "Aceite de Oliva",
+    cantidad: 5,
+    precio: 20.0,
+    fechaVencimiento: new Date(2025, 2, 10),
+    proveedor: "Distribuidora Sana"
+  },
+    ];
+    let stockMinimo = 1;
+    const productosTabla = document.getElementById('productos-lista');
+
+    function actualizarTablaProductos() {
+      // Limpiar la tabla antes de volver a dibujarla
+      productosTabla.innerHTML = "";
+
+      // Volver a dibujar la tabla con la nueva lista de productos
+      productos.forEach(producto => {
+        const tr = document.createElement('tr');
+        const fechaFormateada = producto.fechaVencimiento.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+
+        tr.innerHTML = `
+          <td>${producto.id}</td>
+          <td>${producto.nombre.toUpperCase()}</td>
+          <td>${producto.cantidad}</td>
+          <td>$${producto.precio.toFixed(2)}</td>
+          <td>${fechaFormateada}</td>
+          <td>${producto.proveedor.toUpperCase()}</td>
+        `;
+        productosTabla.appendChild(tr);
+      });
+
+      // Llamar a la función para generar alertas
+      generarAlertas();
+    }
+
+    productos.forEach(producto => {
+      const tr = document.createElement('tr');
+      const fechaFormateada = producto.fechaVencimiento.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+
+      tr.innerHTML = `
+        <td>${producto.id}</td>
+        <td>${producto.nombre.toUpperCase()}</td>
+        <td>${producto.cantidad}</td>
+        <td>$${producto.precio.toFixed(2)}</td>
+        <td>${fechaFormateada}</td>
+        <td>${producto.proveedor.toUpperCase()}</td>
+      `;
+      productosTabla.appendChild(tr);
+    });
+
+    function agregarProducto() {
+      try {
+        const nuevoProducto = Producto(
+          productos.length + 1, // ID único para el nuevo producto
+          prompt("Ingrese el nombre del producto"),
+          parseInt(prompt("Ingrese la cantidad")),
+          parseFloat(prompt("Ingrese el precio")),
+          new Date(prompt("Ingrese la fecha de vencimiento (YYYY-MM-DD)")),
+          prompt("Ingrese el proveedor")
+        );
+
+        productos.push(nuevoProducto);
+
+        // Actualizar la tabla
+        const tr = document.createElement('tr');
+        const fechaFormateadaNuevo = nuevoProducto.fechaVencimiento.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+
+        tr.innerHTML = `  
+          <td>${nuevoProducto.id}</td>
+          <td>${nuevoProducto.nombre.toUpperCase()}</td>
+          <td>${nuevoProducto.cantidad}</td>
+          <td>$${nuevoProducto.precio.toFixed(2)}</td>
+          <td>${fechaFormateadaNuevo}</td>
+          <td>${nuevoProducto.proveedor.toUpperCase()}</td>
+        `;
+        productosTabla.appendChild(tr);
+
+        // Llamar a la función para generar alertas
+        generarAlertas();
+      } catch (e) {
+        alert("Ocurrió un error al agregar el producto: " + e.message);
+      }
+    }
+
+    function eliminarProducto() {
+      try {
+        const id = parseInt(prompt("Ingrese el ID del producto a eliminar"));
+
+        if (isNaN(id)) {
+          alert("El ID del producto debe ser un número entero.");
+          return;
+        }
+
+        // Busca el producto en el arreglo
+        const indiceProducto = productos.findIndex(p => p.id === id);
+
+        // Si el producto no existe, muestra un mensaje de error
+        if (indiceProducto === -1) {
+          alert("No se encontró el producto con el ID " + id);
+          return;
+        }
+
+        // Elimina el producto del arreglo
+        productos.splice(indiceProducto, 1);
+
+        // Actualiza la tabla de productos
+        actualizarTablaProductos();
+
+        alert("Producto eliminado correctamente.");
+      } catch (e) {
+        alert("Ocurrió un error al eliminar el producto: " + e.message);
+      }
+    }
+
+    function actualizarStock() {
+      try {
+        const id = parseInt(prompt("Ingrese el ID del producto a actualizar"));
+        const producto = productos.find(p => p.id === id);
+
+        if (!producto) {
+          alert("No se encontró el producto con el ID " + id);
+          return;
+        }
+
+        producto.nombre = prompt("Ingrese el nuevo nombre del producto");
+        producto.cantidad = parseInt(prompt("Ingrese la nueva cantidad"));
+        producto.precio = parseFloat(prompt("Ingrese el nuevo precio"));
+        producto.fechaVencimiento = new Date(prompt("Ingrese la nueva fecha de vencimiento (YYYY-MM-DD)"));
+        producto.proveedor = prompt("Ingrese el nuevo proveedor");
+
+        // Actualiza la tabla de productos
+        actualizarTablaProductos();
+
+        alert("Stock actualizado correctamente.");
+      } catch (e) {
+        alert("Ocurrió un error al actualizar el stock: " + e.message);
+      }
+    }
+
+    function Pedidos() {
+  const nombre = prompt("Ingrese su nombre:");
+  const direccion = prompt("Ingrese su dirección:");
+  const cedula = prompt("Ingrese su cédula:");
+  const celular = prompt("Ingrese su telefono ")
+  const id = parseInt(prompt("Ingrese el ID del producto a pedir (o ingrese 0 para finalizar)"));
+
+  if (id === 0) {
+    // El usuario ingresó 0 para finalizar
+    return;
+  }
+
+  const cantidadPedido = parseInt(prompt("Ingrese la cantidad que desea pedir"));
+
+  // Usar find() para obtener el primer producto que cumple con la condición
+  const producto = productos.find(producto => producto.id === id && producto.cantidad >= cantidadPedido);
+
+  // Si no se encontró un producto que cumpla con la condición, mostrar un mensaje de error
+  if (!producto) {
+    alert("No se encontraron productos con el ID " + id + " o con suficiente stock para el pedido.");
+    return;
+  }
+
+  // Restar la cantidad del stock
+  producto.cantidad -= cantidadPedido;
+
+  // Actualiza la tabla de productos
+  actualizarTablaProductos();
+
+  // Crear y mostrar la factura
+  const totalPedido = cantidadPedido * producto.precio;
+  function generarFactura(nombre, direccion, cedula, celular, producto, cantidadPedido, totalPedido) {
+    const factura = `
+      Factura:
+      Nombre: ${nombre}
+      Dirección: ${direccion}
+      Cédula: ${cedula}
+      Numero: ${celular}
+      Producto: ${producto.nombre}
+      Cantidad: ${cantidadPedido}
+      Precio unitario: ${producto.precio}
+      Total: ${totalPedido}
+    `;
+
+    return factura;
+  }
+
+  alert(generarFactura(nombre, direccion, cedula, celular, producto, cantidadPedido, totalPedido));
+}
+
+function reporteMovimientosVencidos() {
+  const fechaHoy = new Date();
+  const movimientosVencidos = productos.filter(producto => new Date(producto.fechaVencimiento) < fechaHoy);
+  return movimientosVencidos;
+}
+
+function reporteProductosMasVendidos() {
+  const productosMasVendidos = productos.sort((a, b) => a.cantidad - b.cantidad).slice(0, 10);
+  return productosMasVendidos;
+}
+
+function reporteProductosMenosVendidos() {
+  const productosMenosVendidos = productos.sort((a, b) => b.cantidad - a.cantidad).slice(0, 10);
+  return productosMenosVendidos;
+}
+
+function info() {
+  const opcion = prompt("Seleccione una opción:\n1. Movimientos Vencidos\n2. Productos Más Vendidos\n3. Productos Menos Vendidos");
+
+  switch (opcion) {
+    case "1":
+      const movimientosVencidos = reporteMovimientosVencidos();
+      const mensajeMovimientosVencidos = movimientosVencidos.map(movimiento => `
+        Nombre: ${movimiento.nombre}
+        Cantidad: ${movimiento.cantidad}
+        Fecha de vencimiento: ${movimiento.fechaVencimiento}
+      `).join("\n");
+      alert("Movimientos Vencidos:\n" + mensajeMovimientosVencidos);
+      break;
+
+    case "2":
+      const productosMasVendidos = reporteProductosMasVendidos();
+      const mensajeProductosMasVendidos = productosMasVendidos.map(producto => `
+        Nombre: ${producto.nombre}
+        Cantidad vendida: ${producto.cantidad}
+        Total vendido: ${producto.cantidad * producto.precio}
+      `).join("\n");
+      alert("Productos Más Vendidos:\n" + mensajeProductosMasVendidos);
+      break;
+
+    case "3":
+      const productosMenosVendidos = reporteProductosMenosVendidos();
+      const mensajeProductosMenosVendidos = productosMenosVendidos.map(producto => `
+        Nombre: ${producto.nombre}
+        Cantidad vendida: ${producto.cantidad}
+        Total vendido: ${producto.cantidad * producto.precio}
+      `).join("\n");
+      alert("Productos Menos Vendidos:\n" + mensajeProductosMenosVendidos);
+      break;
+
+    default:
+      alert("Opción no válida");
+  }
+}
+
+function generarAlertas() {
+      productos.forEach(producto => {
+        if (producto.cantidad <= stockMinimo) {
+          alert(`¡Alerta! El producto "${producto.nombre}" tiene un stock bajo (${producto.cantidad}).`);
+        }
+
+        if (producto.fechaVencimiento < new Date()) {
+          alert(`¡Alerta! El producto "${producto.nombre}" ha vencido.`);
+        }
+      });
+    }
+
+    function regresarPaginaAnterior() {
+      alert("¡Gracias por usar nuestro servicio!");
+      window.location.href = "idex.html";
+    }
+
+  </script>
+</body>
+</html>

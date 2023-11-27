@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Account Management</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #555;
+        }
+
+        input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        input[type="button"] {
+            background-color: #4caf50;
+            color: #fff;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        input[type="button"]:hover {
+            background-color: #45a049;
+        }
+
+        hr {
+            margin: 15px 0;
+            border: 0;
+            border-top: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+  <h2>Agregar Producto</h2>
+  <form id="agregarForm">
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre" required>
+      <label for="cantidad">Cantidad:</label>
+      <input type="number" id="cantidad" required>
+      <label for="precio">Precio:</label>
+      <input type="number" id="precio" required>
+      <label for="fechaVencimiento">Fecha de Vencimiento:</label>
+      <input type="date" id="fechaVencimiento" required>
+      <label for="proveedor">Proveedor:</label>
+      <input type="text" id="proveedor" required>
+      <button type="button" onclick="agregarProducto()">Agregar Producto</button>
+  </form>
+
+  <h2>Eliminar Producto</h2>
+  <form id="eliminarForm">
+      <label for="eliminarId">ID del Producto a Eliminar:</label>
+      <input type="text" id="eliminarId" required>
+      <button type="button" onclick="eliminarProducto()">Eliminar Producto</button>
+  </form>
+
+  <h2>Actualizar Stock</h2>
+  <form id="actualizarForm">
+      <label for="actualizarId">ID del Producto a Actualizar:</label>
+      <input type="text" id="actualizarId" required>
+      <label for="nuevaCantidad">Nueva Cantidad:</label>
+      <input type="number" id="nuevaCantidad" required>
+      <button type="button" onclick="actualizarStock()">Actualizar Stock</button>
+  </form>
+    <script>
+
+const currentDate = new Date();
+
+const Producto = (id,nombre, cantidad,precio, fechaVencimiento,proveedor) => ({
+  id,
+  nombre,
+  cantidad,
+  precio,
+  fechaVencimiento,
+  proveedor
+});
+
+const productos = [];
+
+ function agregarProducto(producto) {
+  try {
+    productos.push(producto);
+    return Right(null);
+  } catch (e) {
+    return Left(e.message);
+  }
+}
+
+function eliminarProducto(id) {
+  try {
+    productos = productos.filter(p => p.id !== id);
+    return Right(null);
+  } catch (e) {
+    return Left(e.message);
+  }
+
+}
+function actualizarStock(id, cantidad) {
+  try {
+    const producto = productos.find(p => p.id === id);
+    producto.cantidad = cantidad;
+    return Right(null);
+  } catch (e) {
+    return Left(e.message);
+  }
+}  
+
+</script>
+</body>
+</html>
+</body>
+</html>

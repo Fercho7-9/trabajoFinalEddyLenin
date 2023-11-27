@@ -1,0 +1,75 @@
+body {
+  font-family: 'Arial', sans-serif;
+  background-image: url('d00ef2e54de196caaf4ee3eb56be010c.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin: 10px; /* Agregué "px" al valor de margen */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Cambié "max-height" a "height" para ocupar el 100% del viewport */
+}
+
+.header img {
+  width: 100%;
+  height: auto; /* Hice la altura automática para mantener la proporción de la imagen */
+}
+
+.table-container {
+  max-width: 90%; /* Cambié el valor a 90% para que sea más práctico */
+  margin-top: 6px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  max-width: 100%; /* Cambié el valor a 100% para ocupar el ancho completo del contenedor */
+  max-height: 200px; /* Cambié el valor a 200px para ser más manejable */
+  overflow-y: auto;
+}
+
+th, td {
+  border: 1px solid #32689d;
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+  background-color: #4caf50;
+  color: white;
+}
+
+th.title-cell {
+  text-align: center;
+  font-size: 24px;
+  padding: 20px;
+}
+
+.botones-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+input[type="button"] {
+  background-color: #4caf50;
+  color: #fff;
+  cursor: pointer;
+  padding: 10px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  width: 150px;
+}
+
+input[type="button"]:last-child {
+  margin-right: 0;
+}
+
+input[type="button"]:hover {
+  background-color: #45a049;
+}
